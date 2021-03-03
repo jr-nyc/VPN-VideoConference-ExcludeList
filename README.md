@@ -1,6 +1,6 @@
 # VPN-Exclude
 
-A script to collect the IPv4 addresses required for conferencing of Zoom, Webex, and Microsoft Teams from the vendors' Website and example Ansible play to generate a Cisco standard ASA ACL so you can exclude Video traffic from your VPN tunnel.
+A script to collect the IPv4 addresses required for conferencing from the vendors' Website of Zoom, Webex, and Microsoft Teams and example Ansible play to generate a Cisco standard ASA ACL so you can exclude Video traffic from your VPN tunnel.
 
 If you don't run ASAs the `get'service_name'IPs` functions in the script collects the IPs from each services website, and puts them in a list for you.
 
