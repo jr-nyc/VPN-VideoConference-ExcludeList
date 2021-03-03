@@ -1,6 +1,6 @@
 # VPN-Exclude
 
-A script and example Ansible play to generate a Cisco standard ASA ACL of Zoom, Webex, and Mircosoft Teams IPv4 addresses, so you can exclude Video traffic from your VPN tunnel.
+A script to collect the IPv4 addresses required for conferencing of Zoom, Webex, and Microsoft Teams from the vendors' Website and example Ansible play to generate a Cisco standard ASA ACL so you can exclude Video traffic from your VPN tunnel.
 
 If you don't run ASAs the `get'service_name'IPs` functions in the script collects the IPs from each services website, and puts them in a list for you.
 
@@ -10,8 +10,9 @@ If you don't run ASAs the `get'service_name'IPs` functions in the script collect
 * `python3 generateASAVPNTunnelACL.py`
 * The List of Subnets will be in roles/ASAVPNTunnelACL/var/main.yml
 
-### To Deploy to your ASAs:
-* ansible-playbook role-ASAVPNTunnelACL.yml -i 'your inventory'
+### To Deploy ACL to your ASAs:
+* ansible-playbook role-ASAVPNTunnelACL.yml -i 'your inventory file'
+* you will want to update the ACL name to one the meets your organizationals naming standards
 
 ### Where Webex, Zoom and MS Teams publish their Lists:
 1. Webex:
