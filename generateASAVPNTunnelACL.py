@@ -9,8 +9,8 @@ import ipaddress as ip
 import yaml
 import json
 import uuid
-import urllib
-from urllib.request import urlopen
+import urllib.request
+
 from bs4 import BeautifulSoup
 
 # pass IpList and description and returns standard ACL
@@ -61,7 +61,7 @@ def getHTMLContent(link):
     # adding try/except incase website does not allow scripting
     # https://stackoverflow.com/questions/3336549/pythons-urllib2-why-do-i-get-error-403-when-i-urlopen-a-wikipedia-page
     try:
-        html = urlopen(link)
+        html = urllib.request.urlopen(link)
     except:
         req = urllib.request.Request(link, headers={"User-Agent": "Magic Browser"})
         html = urllib.request.urlopen(req)
@@ -96,7 +96,7 @@ def getMSTeamsIPs():
 
     # https://docs.microsoft.com/en-us/microsoftteams/prepare-network
     # https://docs.microsoft.com/en-us/office365/enterprise/urls-and-ip-address-ranges#skype-for-business-online-and-microsoft-teams
-    html = urlopen(
+    html = urllib.request.urlopen(
         "https://endpoints.office.com/endpoints/worldwide?clientrequestid={}".format(
             uuid.uuid4()
         )
@@ -160,7 +160,6 @@ if __name__ == "__main__":
     zoomACL = getZoomIPs()
     MSTeamsACL = getMSTeamsIPs()
     webexACL = getWebexIPs()
-    zoomACL = getZoomIPs()
     staticACL = genStaticACL()
     genACLFile(
         "roles/ASAVPNTunnelACL/var/main.yml", staticACL, zoomACL, webexACL, MSTeamsACL
