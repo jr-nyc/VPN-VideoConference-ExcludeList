@@ -10,7 +10,7 @@ import yaml
 import json
 import uuid
 import urllib.request
-
+import requests
 from bs4 import BeautifulSoup
 
 # pass IpList and description and returns standard ACL
@@ -21,10 +21,10 @@ def writeASAACL(ipList, remark):
 
     # Loops through Ip list where they are in the format IP/notation
     for x in ipList:
-        print(x)
+ 
         ipAddr, ipMask = splitIPMask(x)
         if ipAddr != "error":
-            # print(type(ipMask))
+
             # ASA converts /32 to host Keyword
             if str(ipMask) == "255.255.255.255":
 
@@ -56,16 +56,16 @@ def genACLFile(filename, *ipLists):
     print(filename)
 
 
-# Parses webage
+# Parses webage with Beautifulsoup
 def getHTMLContent(link):
-    # adding try/except incase website does not allow scripting
-    # https://stackoverflow.com/questions/3336549/pythons-urllib2-why-do-i-get-error-403-when-i-urlopen-a-wikipedia-page
-    try:
-        html = urllib.request.urlopen(link)
-    except:
+    # webex's webpage changed and urllib couldn't follow the 308
+    if "webex" in link:
+        html = requests.get(link).text
+    # zoom has bot protection https://stackoverflow.com/questions/3336549/pythons-urllib2-why-do-i-get-error-403-when-i-urlopen-a-wikipedia-page
+    else:
         req = urllib.request.Request(link, headers={"User-Agent": "Magic Browser"})
         html = urllib.request.urlopen(req)
-        # print(html.read())
+
     soup = BeautifulSoup(html, "html.parser")
 
     return soup
@@ -122,6 +122,7 @@ def getZoomIPs():
 
     zoomIP = []
     for p in content.find_all("p"):
+
         p_text = p.get_text(",")
         p_list = p_text.split(",")
         # finds first table with IP ranges
@@ -130,7 +131,7 @@ def getZoomIPs():
                 if len(x) > 10:
                     zoomIP.append(x.strip())
             break
-
+ 
     zoomACL = writeASAACL(zoomIP, "zoom Public IPs")
     return zoomACL
 
@@ -138,8 +139,9 @@ def getZoomIPs():
 def getWebexIPs():
     # collects webebx IPs
     # IPs under 'ul' tag
+    
     content = getHTMLContent(
-        "https://help.webex.com/en-us/WBX264/How-Do-I-Allow-Webex-Meetings-Traffic-on-My-Network"
+        "https://help.webex.com/en-us/WBX264/How-Do-I-Allow-Webex-Meetings-Traffic-on-My-Network?#id_135011"
     )
 
     webexIP = []
@@ -162,5 +164,5 @@ if __name__ == "__main__":
     webexACL = getWebexIPs()
     staticACL = genStaticACL()
     genACLFile(
-        "roles/ASAVPNTunnelACL/var/main.yml", staticACL, zoomACL, webexACL, MSTeamsACL
+        "roles/ASAVPNTunnelACL/var/main.yml", staticACL, zoomACL,  webexACL,  MSTeamsACL
     )
